@@ -1,6 +1,7 @@
 package com.fintech.config;
 
 import com.fintech.service.UserService;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,5 +57,10 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public PhoneNumberUtil phoneNumberUtil() {
+        return PhoneNumberUtil.getInstance();  // This method gets the singleton instance of PhoneNumberUtil
     }
 }

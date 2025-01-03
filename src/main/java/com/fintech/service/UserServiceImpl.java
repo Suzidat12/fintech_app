@@ -21,13 +21,8 @@ public class UserServiceImpl implements UserService {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                 // Try to find student first
-                UserDetails user = studentRepository.findByEmail(username)
+                UserDetails user = userAccountRepository.findByEmail(username)
                         .orElse(null);
-                if (user == null) {
-                    // If student not found, try to find lecturer
-                    user = lecturerRepository.findByEmail(username)
-                            .orElseThrow(() -> new UsernameNotFoundException("User with email " + username + " not found"));
-                }
                 if (user == null) {
                     // If lecturer not found, try to find admin
                     user = adminRepository.findByEmail(username)

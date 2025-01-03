@@ -71,5 +71,11 @@ public class LoanService {
         return ok(loanList,"User loans details fetched successfully");
     }
 
+    public ResponseEntity<ResponseDto<List<Loan>>> getLoanByStatus(String status) {
+        List<Loan> loanList = loanRepository.findAllByStatus(LoanStatus.valueOf(status));
+        return ok(loanList,"User loans details with status fetched successfully");
+    }
+
+
 
 }

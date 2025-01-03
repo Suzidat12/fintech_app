@@ -1,6 +1,8 @@
 package com.fintech.service;
 
 import com.fintech.dto.ResponseDto;
+import com.fintech.dto.request.ApplyTransactionRequest;
+import com.fintech.dto.request.DisbursementRequest;
 import com.fintech.dto.response.TransactionStatement;
 import com.fintech.exception.BadRequestException;
 import com.fintech.model.Admin;
@@ -17,6 +19,7 @@ import com.fintech.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -37,9 +40,9 @@ public class TransactionService {
 
 
 
-    public ResponseEntity<ResponseDto<Transactions>> recordDisbursement(Long loanId, Long adminId, BigDecimal amount) {
-        Optional<Loan> loanOptional = loanRepository.findById(loanId);
-        Optional<Admin> adminOptional = adminRepository.findById(adminId);
+    public ResponseEntity<ResponseDto<Transactions>> recordDisbursement(@RequestBody DisbursementRequest request) {
+        Optional<Loan> loanOptional = loanRepository.findById(request.getLoanId());
+        Optional<Admin> adminOptional = adminRepository.findById(request.getAdminId());
         if (loanOptional.isEmpty()) {
             throw new BadRequestException("Loan not found");
         }
@@ -51,7 +54,7 @@ public class TransactionService {
         Transactions transaction = new Transactions();
         transaction.setLoan(loan);
         transaction.setVerifiedBy(admin);
-        transaction.setAmount(amount);
+        transaction.setAmount(request.getAmount());
         transaction.setTransactionType(TransactionType.DISBURSEMENT);
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setStatus(AppStatus.COMPLETED);
@@ -61,9 +64,9 @@ public class TransactionService {
         return ok(transaction,"Loan disbursed successfully");
     }
 
-    public ResponseEntity<ResponseDto<Transactions>> recordRepayment(Long loanId, Long adminId, BigDecimal amount) {
-        Optional<Loan> loanOptional = loanRepository.findById(loanId);
-        Optional<Admin> adminOptional = adminRepository.findById(adminId);
+    public ResponseEntity<ResponseDto<Transactions>> recordRepayment(DisbursementRequest request) {
+        Optional<Loan> loanOptional = loanRepository.findById(request.getLoanId());
+        Optional<Admin> adminOptional = adminRepository.findById(request.getAdminId());
         if (loanOptional.isEmpty()) {
             throw new BadRequestException("Loan not found");
         }
@@ -75,7 +78,7 @@ public class TransactionService {
         Transactions transaction = new Transactions();
         transaction.setLoan(loan);
         transaction.setVerifiedBy(admin);
-        transaction.setAmount(amount);
+        transaction.setAmount(request.getAmount());
         transaction.setTransactionType(TransactionType.REPAYMENT);
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setStatus(AppStatus.COMPLETED);
@@ -84,38 +87,38 @@ public class TransactionService {
         transactionRepository.save(transaction);
         return ok(transaction,"Loan repayment successfully done");
     }
-    public ResponseEntity<ResponseDto<Transactions>> applyTransaction(Long accountId, BigDecimal amount, String transactionType) {
-        Optional<UsersAccount> usersAccountOptional = userAccountRepository.findById(accountId);
+    public ResponseEntity<ResponseDto<Transactions>> applyTransaction(@RequestBody ApplyTransactionRequest request) {
+        Optional<UsersAccount> usersAccountOptional = userAccountRepository.findById(request.getUserId());
         if (usersAccountOptional.isEmpty()) {
             throw new BadRequestException("Account not found");
         }
 
         UsersAccount usersAccount = usersAccountOptional.get();
         BigDecimal currentBalance = usersAccount.getAccountBalance();
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+        if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new BadRequestException("Transaction amount must be positive");
         }
-        if (TransactionType.WITHDRAWAL.name().equals(transactionType)) {
-            if (currentBalance.compareTo(amount) < 0) {
+        if (TransactionType.WITHDRAWAL.name().equals(request.getTransactionType())) {
+            if (currentBalance.compareTo(request.getAmount()) < 0) {
                 throw new BadRequestException("Insufficient funds for this withdrawal");
             }
         }
-        if (TransactionType.DEPOSIT.name().equals(transactionType)) {
-            usersAccount.setAccountBalance(currentBalance.add(amount));
-        } else if (TransactionType.WITHDRAWAL.name().equals(transactionType)) {
-            usersAccount.setAccountBalance(currentBalance.subtract(amount));
+        if (TransactionType.DEPOSIT.name().equals(request.getTransactionType())) {
+            usersAccount.setAccountBalance(currentBalance.add(request.getAmount()));
+        } else if (TransactionType.WITHDRAWAL.name().equals(request.getTransactionType())) {
+            usersAccount.setAccountBalance(currentBalance.subtract(request.getAmount()));
         }
         userAccountRepository.save(usersAccount);
         Transactions transaction = new Transactions();
-        transaction.setAmount(amount);
+        transaction.setAmount(request.getAmount());
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setUser(usersAccount);
-        transaction.setTransactionType(TransactionType.valueOf(transactionType));
+        transaction.setTransactionType(TransactionType.valueOf(request.getTransactionType()));
         transactionRepository.save(transaction);
         return ok(transaction,"Transaction applied successfully");
     }
 
-    public ResponseEntity<ResponseDto<List<TransactionStatement>>> generateTransactionStatementForUser(Long userId, String startDate, String endDate) {
+    public ResponseEntity<ResponseDto<List<TransactionStatement>>> generateTransactionStatementForUser(Long userId) {
         Optional<UsersAccount> usersAccountOptional = userAccountRepository.findById(userId);
         if (usersAccountOptional.isEmpty()) {
             throw new BadRequestException("Account not found");

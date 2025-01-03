@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 
 @Entity
 //@Indexed
-@Table(name = "rectification")
+@Table(name = "transactions")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -26,23 +26,23 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @SequenceGenerator(
-        name = "rectification_sequence_gen",
-        sequenceName = "rectification_seq",
+        name = "transactions_sequence_gen",
+        sequenceName = "transactions_seq",
         allocationSize = 1)
 public class Transactions {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rectification_sequence_gen")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transactions_sequence_gen")
     private Long id;
     @Column(name = "amount")
     private BigDecimal amount;
     @Column(name = "transaction_type")
     @Enumerated(EnumType.STRING)
-    private TransactionType transactionType;  // e.g., "Disbursement", "Repayment"
+    private TransactionType transactionType;
     @Column(name = "transaction_date")
     private LocalDateTime transactionDate;
     @Column(name = "app_status")
     @Enumerated(EnumType.STRING)
-    private AppStatus status = AppStatus.PENDING;  // "PENDING", "COMPLETED"
+    private AppStatus status = AppStatus.PENDING;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UsersAccount user;
