@@ -10,14 +10,12 @@ import com.fintech.model.enums.LoanStatus;
 import com.fintech.repository.LoanRepository;
 import com.fintech.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 

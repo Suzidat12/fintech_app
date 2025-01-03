@@ -6,17 +6,15 @@ import com.fintech.dto.LoginRequest;
 import com.fintech.dto.ResponseDto;
 import com.fintech.dto.request.UserAccountRequest;
 import com.fintech.exception.BadRequestException;
-import com.fintech.model.Admin;
-import com.fintech.model.Loan;
 import com.fintech.model.UsersAccount;
 import com.fintech.model.enums.AppStatus;
-import com.fintech.repository.AdminRepository;
 import com.fintech.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,7 +29,7 @@ import static com.fintech.dto.ApiResponse.ok;
 @RequiredArgsConstructor
 public class UsersAccountService {
     private final UserAccountRepository userAccountRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
 
