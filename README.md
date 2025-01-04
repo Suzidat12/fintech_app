@@ -61,3 +61,17 @@ It is the place we have all our endpoints and we have Admin and User controller.
 
 JWT is the security that was implemented which also ensure 
 role based access control.
+
+Post man collection link for the API : 
+
+PART B
+Since I cannot directly access external websites www.quickcred-web.vercel.app from here, 
+I can provide general advice on how to evaluate and improve the user experience
+for a website based on typical issues that may arise.
+
+Secure Website (SSL/HTTPS):
+The lack of SSL (Secure Sockets Layer) means that the website is not using HTTPS, which can expose user data 
+(especially sensitive information like passwords or credit card details) to security risks.
+Recommendation: Implement SSL to ensure that the website is secure and that user data is encrypted. 
+Visitors will also get the visual indication of security in their browser (the padlock symbol), which builds trust. 
+You can get SSL certificates from providers like Let's Encrypt, which offers free certificates.
