@@ -41,11 +41,6 @@ public class UserAccountController {
         return loanService.getLoanByUserId(userId);
     }
 
-    @GetMapping("/fetch-loan-by-status")
-    public  ResponseEntity<ResponseDto<List<Loan>>> getLoanByStatus(@RequestParam("status") String status){
-        return loanService.getLoanByStatus(status);
-    }
-
     @PostMapping("/apply-transaction")
     public  ResponseEntity<ResponseDto<Transactions>> applyTransaction(@RequestBody ApplyTransactionRequest request){
         return transactionService.applyTransaction(request);

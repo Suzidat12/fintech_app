@@ -51,6 +51,9 @@ public class TransactionService {
         }
         Loan loan = loanOptional.get();
         Admin admin = adminOptional.get();
+        UsersAccount userAccount = loan.getUser();
+        BigDecimal newBalance = userAccount.getAccountBalance().add(request.getAmount());
+        userAccount.setAccountBalance(newBalance);
         Transactions transaction = new Transactions();
         transaction.setLoan(loan);
         transaction.setVerifiedBy(admin);
@@ -59,7 +62,9 @@ public class TransactionService {
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setStatus(AppStatus.COMPLETED);
         loan.setStatus(LoanStatus.DISBURSED);
+        loan.setNarration("Total amount of "+transaction.getAmount()+" "+ "has been disbursed into your account");
         loanRepository.save(loan);
+        userAccountRepository.save(userAccount);
         transactionRepository.save(transaction);
         return ok(transaction,"Loan disbursed successfully");
     }
@@ -75,6 +80,9 @@ public class TransactionService {
         }
         Loan loan = loanOptional.get();
         Admin admin = adminOptional.get();
+        UsersAccount userAccount = loan.getUser();
+        BigDecimal newBalance = userAccount.getAccountBalance().subtract(request.getAmount());
+        userAccount.setAccountBalance(newBalance);
         Transactions transaction = new Transactions();
         transaction.setLoan(loan);
         transaction.setVerifiedBy(admin);
@@ -83,6 +91,7 @@ public class TransactionService {
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setStatus(AppStatus.COMPLETED);
         loan.setStatus(LoanStatus.REPAID);
+        loan.setNarration("Total amount of "+transaction.getAmount()+" "+ "has been recorded for your repayment");
         loanRepository.save(loan);
         transactionRepository.save(transaction);
         return ok(transaction,"Loan repayment successfully done");
@@ -113,6 +122,7 @@ public class TransactionService {
         transaction.setAmount(request.getAmount());
         transaction.setTransactionDate(LocalDateTime.now());
         transaction.setUser(usersAccount);
+        transaction.setStatus(AppStatus.COMPLETED);
         transaction.setTransactionType(TransactionType.valueOf(request.getTransactionType()));
         transactionRepository.save(transaction);
         return ok(transaction,"Transaction applied successfully");

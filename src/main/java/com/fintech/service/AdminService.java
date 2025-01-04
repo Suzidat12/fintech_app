@@ -9,6 +9,7 @@ import com.fintech.exception.BadRequestException;
 import com.fintech.model.Admin;
 import com.fintech.model.Loan;
 import com.fintech.model.UsersAccount;
+import com.fintech.model.enums.AppStatus;
 import com.fintech.model.enums.LoanStatus;
 import com.fintech.model.enums.Role;
 import com.fintech.repository.AdminRepository;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -36,7 +38,7 @@ public class AdminService {
     private final LoanRepository loanRepository;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<ResponseDto<Admin>> create(AdminAccountRequest request){
         Optional<Admin> adminOptional =adminRepository.findByEmail(request.getEmail());
@@ -53,7 +55,7 @@ public class AdminService {
         adminRepository.save(admin);
         return ok(admin,"Admin created successfully");
     }
-    public JwtAuthenticationResponse login(LoginRequest request) {
+    public JwtAuthenticationResponse loginAdmin(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getEmail(), request.getPassword()));
         Admin admin = adminRepository.findByEmail(request.getEmail()).orElseThrow(() -> new IllegalArgumentException("Invalid email or password ..."));
@@ -78,6 +80,7 @@ public class AdminService {
         UsersAccount usersAccount = usersAccountOptional.get();
         Admin admin = adminOptional.get();
         usersAccount.setVerified(true);
+        usersAccount.setAccountStatus(AppStatus.COMPLETED);
         usersAccount.setVerifiedBy(admin);
         userAccountRepository.save(usersAccount);
         return ok(null, "User verified successfully");

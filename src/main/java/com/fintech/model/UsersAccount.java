@@ -58,6 +58,7 @@ public class UsersAccount implements UserDetails {
     private boolean isVerified = false;
     @Enumerated(EnumType.STRING)
     private AppStatus accountStatus = AppStatus.PENDING;
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Loan> loanList;
     @Column(name = "role")

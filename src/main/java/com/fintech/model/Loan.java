@@ -35,6 +35,8 @@ public class Loan {
     private int tenure = 0;  // Tenure in months
     @Column(name = "interest_rate")
     private BigDecimal interestRate;  // Calculated interest rate
+    @Column(name = "narration")
+    private String narration;
     @Column(name = "total_amount")
     private BigDecimal totalAmount;  // Loan amount + interest
     @Column(name = "disburstment_date")
@@ -44,6 +46,7 @@ public class Loan {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UsersAccount user;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "admin_id")  // Foreign key to Admin table
     private Admin admin;  // Admin who approved or rejected the loa

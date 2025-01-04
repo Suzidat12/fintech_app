@@ -32,13 +32,13 @@ public class AuthController {
     public ResponseEntity<ResponseDto<UsersAccount>> create(@RequestBody UserAccountRequest request){
         return usersAccountService.create(request);
     }
-    @PostMapping("/login-admin")
+    @PostMapping("/login")
     public JwtAuthenticationResponse login(@RequestBody LoginRequest request) {
-        return adminService.login(request);
+        return adminService.loginAdmin(request);
     }
 
     @PostMapping("/login-user")
     public JwtAuthenticationResponse loginUser(@RequestBody LoginRequest request) {
-        return usersAccountService.login(request);
+        return usersAccountService.loginUser(request);
     }
 }

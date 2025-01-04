@@ -3,6 +3,7 @@ package com.fintech.controller;
 
 import com.fintech.dto.ResponseDto;
 import com.fintech.dto.request.DisbursementRequest;
+import com.fintech.dto.request.RepaymentRequest;
 import com.fintech.dto.request.UpdateLoanStatusRequest;
 import com.fintech.model.Loan;
 import com.fintech.model.Transactions;
@@ -51,7 +52,7 @@ public class AdminController {
     }
 
     @PostMapping("/record-repayment")
-    public  ResponseEntity<ResponseDto<Transactions>> recordRepayment(@RequestBody DisbursementRequest request) {
+    public  ResponseEntity<ResponseDto<Transactions>> recordRepayment(@RequestBody RepaymentRequest request) {
         return transactionService.recordRepayment(request);
     }
 

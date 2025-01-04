@@ -46,10 +46,8 @@ public class Admin implements UserDetails {
     private String phoneNumber;
     @Column(name = "password")
     private String password;
-    @Column(name = "address")
-    private String address;
     @Enumerated(EnumType.STRING)
-    private AppStatus accountStatus = AppStatus.PENDING;
+    private AppStatus accountStatus = AppStatus.COMPLETED;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
@@ -61,7 +59,7 @@ public class Admin implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(Role.ADMIN.name()));
+        return List.of(new SimpleGrantedAuthority("ADMIN"));
     }
 
     @Override

@@ -37,6 +37,10 @@ public class LoanService {
         BigDecimal totalAmount = loanRequest.getLoanAmount().add(loanRequest.getLoanAmount()
                 .multiply(interestRate).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP));
         UsersAccount usersAccount = usersAccountOptional.get();
+        boolean isUserVerified = usersAccount.isVerified();
+        if (!isUserVerified) {
+            throw new BadRequestException("User is not verified. Loan application cannot proceed.");
+        }
         boolean hasOutstandingLoan = loanRepository.existsByUserAndStatusIn(usersAccount,
                 List.of(LoanStatus.OUTSTANDING));
         if (hasOutstandingLoan) {
@@ -49,7 +53,7 @@ public class LoanService {
         loan.setInterestRate(interestRate);
         loan.setTotalAmount(totalAmount);
         loan.setStatus(LoanStatus.APPLIED);
-        loan.setDisbursementDate(LocalDateTime.now());
+        loan.setCreatedDate(LocalDateTime.now());
         loanRepository.save(loan);
         return ok(loan,"Loan applied successfully");
     }

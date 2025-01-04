@@ -49,6 +49,7 @@ public class UsersAccountService {
        usersAccount.setAccountStatus(AppStatus.PENDING);
        usersAccount.setBvn(request.getBvn());
        usersAccount.setCreatedDate(LocalDateTime.now());
+       userAccountRepository.save(usersAccount);
        return ok(usersAccount,"User created successfully");
    }
     public ResponseEntity<ResponseDto<UsersAccount>> update(UserAccountRequest request, Long id){
@@ -66,6 +67,7 @@ public class UsersAccountService {
         usersAccount.setAccountStatus(AppStatus.PENDING);
         usersAccount.setBvn(request.getBvn());
         usersAccount.setUpdatedDate(LocalDateTime.now());
+        userAccountRepository.save(usersAccount);
         return ok(usersAccount,"User updated successfully");
     }
     public ResponseEntity<ResponseDto<String>> delete(Long userId) {
@@ -81,7 +83,7 @@ public class UsersAccountService {
        List<UsersAccount> usersAccountList = userAccountRepository.findAll();
       return ok(usersAccountList,"Users data retrieve successfully");
     }
-    public JwtAuthenticationResponse login(LoginRequest request) {
+    public JwtAuthenticationResponse loginUser(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getEmail(), request.getPassword()));
         UsersAccount user = userAccountRepository.findByEmail(request.getEmail()).orElseThrow(() -> new IllegalArgumentException("Invalid email or password ..."));

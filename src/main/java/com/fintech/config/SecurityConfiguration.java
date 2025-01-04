@@ -8,14 +8,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 @Configuration
 @EnableWebSecurity
@@ -29,10 +33,10 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf().disable() // Disables CSRF protection
                 .authorizeRequests(authorize -> authorize
-                        .antMatchers("/register/**").permitAll()
-                        .antMatchers("/student/**").hasAuthority("STUDENT") // Require 'USER' authority for /student/**
-                        .antMatchers("/lecturer/**").hasAnyAuthority("LECTURER","ADMIN") // Require 'USER' authority for /student/**
-                        .antMatchers("/admin/**").hasAnyAuthority("ADMIN","LECTURER") // Require 'USER' authority for /student/**
+                        .antMatchers("/api/auth/**").permitAll()
+                        .antMatchers("/admin/**").hasAuthority("ADMIN") // Require 'USER' authority for /student/**
+                        .antMatchers("/account/**").hasAuthority("USER") // Require 'USER' authority for /student/**
+
                         .anyRequest().authenticated() // Require authentication for all other requests
                 )
                 .sessionManagement(session -> session
@@ -57,10 +61,5 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
         return configuration.getAuthenticationManager();
-    }
-
-    @Bean
-    public PhoneNumberUtil phoneNumberUtil() {
-        return PhoneNumberUtil.getInstance();  // This method gets the singleton instance of PhoneNumberUtil
     }
 }
