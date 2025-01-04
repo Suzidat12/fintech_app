@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,27 +33,28 @@ public class UsersAccountService {
     private final JWTService jwtService;
 
 
-   public ResponseEntity<ResponseDto<UsersAccount>> create(UserAccountRequest request){
-       Optional<UsersAccount> usersAccountOptional = userAccountRepository.findByEmail(request.getEmail());
-       if(usersAccountOptional.isPresent()){
-        throw new BadRequestException("Account already exist");
-       }
-       UsersAccount usersAccount = new UsersAccount();
-       usersAccount.setEmail(request.getEmail());
-       usersAccount.setGender(request.getGender());
-       usersAccount.setAddress(request.getAddress());
-       usersAccount.setPassword(passwordEncoder.encode(request.getPassword()));
-       usersAccount.setFullName(request.getFirstName().concat(" ").concat(request.getLastName()));
-       usersAccount.setDateOfBirth(request.getDateOfBirth());
-       usersAccount.setAccountStatus(AppStatus.PENDING);
-       usersAccount.setBvn(request.getBvn());
-       usersAccount.setCreatedDate(LocalDateTime.now());
-       userAccountRepository.save(usersAccount);
-       return ok(usersAccount,"User created successfully");
-   }
-    public ResponseEntity<ResponseDto<UsersAccount>> update(UserAccountRequest request, Long id){
+    public ResponseEntity<ResponseDto<UsersAccount>> create(UserAccountRequest request) {
+        Optional<UsersAccount> usersAccountOptional = userAccountRepository.findByEmail(request.getEmail());
+        if (usersAccountOptional.isPresent()) {
+            throw new BadRequestException("Account already exist");
+        }
+        UsersAccount usersAccount = new UsersAccount();
+        usersAccount.setEmail(request.getEmail());
+        usersAccount.setGender(request.getGender());
+        usersAccount.setAddress(request.getAddress());
+        usersAccount.setPassword(passwordEncoder.encode(request.getPassword()));
+        usersAccount.setFullName(request.getFirstName().concat(" ").concat(request.getLastName()));
+        usersAccount.setDateOfBirth(request.getDateOfBirth());
+        usersAccount.setAccountStatus(AppStatus.PENDING);
+        usersAccount.setBvn(request.getBvn());
+        usersAccount.setCreatedDate(LocalDateTime.now());
+        userAccountRepository.save(usersAccount);
+        return ok(usersAccount, "User created successfully");
+    }
+
+    public ResponseEntity<ResponseDto<UsersAccount>> update(UserAccountRequest request, Long id) {
         Optional<UsersAccount> usersAccountOptional = userAccountRepository.findById(id);
-        if(usersAccountOptional.isEmpty()){
+        if (usersAccountOptional.isEmpty()) {
             throw new BadRequestException("Account does not exist");
         }
         UsersAccount usersAccount = usersAccountOptional.get();
@@ -68,21 +68,25 @@ public class UsersAccountService {
         usersAccount.setBvn(request.getBvn());
         usersAccount.setUpdatedDate(LocalDateTime.now());
         userAccountRepository.save(usersAccount);
-        return ok(usersAccount,"User updated successfully");
+        return ok(usersAccount, "User updated successfully");
     }
+
     public ResponseEntity<ResponseDto<String>> delete(Long userId) {
         Optional<UsersAccount> usersAccountOptional = userAccountRepository.findById(userId);
         if (usersAccountOptional.isEmpty()) {
             throw new BadRequestException("Account does not exist");
         }
-        userAccountRepository.deleteById(userId);
+        UsersAccount usersAccount = usersAccountOptional.get();
+        usersAccount.setAccountStatus(AppStatus.INACTIVE); // It is not ideal to delete customer account in a fintech app
+        userAccountRepository.save(usersAccount);
+        return ok(null, "User account Deactivated successfully");
+    }
 
-        return ok(null,"User account deleted successfully");
+    public ResponseEntity<ResponseDto<List<UsersAccount>>> retrieve() {
+        List<UsersAccount> usersAccountList = userAccountRepository.findAll();
+        return ok(usersAccountList, "Users data retrieve successfully");
     }
-    public ResponseEntity<ResponseDto<List<UsersAccount>>> retrieve(){
-       List<UsersAccount> usersAccountList = userAccountRepository.findAll();
-      return ok(usersAccountList,"Users data retrieve successfully");
-    }
+
     public JwtAuthenticationResponse loginUser(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getEmail(), request.getPassword()));

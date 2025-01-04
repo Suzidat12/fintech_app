@@ -3,6 +3,7 @@ package com.fintech.service;
 import com.fintech.dto.ResponseDto;
 import com.fintech.dto.request.ApplyTransactionRequest;
 import com.fintech.dto.request.DisbursementRequest;
+import com.fintech.dto.request.RepaymentRequest;
 import com.fintech.dto.response.TransactionStatement;
 import com.fintech.exception.BadRequestException;
 import com.fintech.model.Admin;
@@ -69,7 +70,7 @@ public class TransactionService {
         return ok(transaction,"Loan disbursed successfully");
     }
 
-    public ResponseEntity<ResponseDto<Transactions>> recordRepayment(DisbursementRequest request) {
+    public ResponseEntity<ResponseDto<Transactions>> recordRepayment(RepaymentRequest request) {
         Optional<Loan> loanOptional = loanRepository.findById(request.getLoanId());
         Optional<Admin> adminOptional = adminRepository.findById(request.getAdminId());
         if (loanOptional.isEmpty()) {

@@ -1,10 +1,9 @@
 package com.fintech.dto.response;
 
-import com.fintech.validation.ExtendedEmailValidator;
-//import com.fintech.validation.PhoneNumber;
-import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+//import com.fintech.validation.PhoneNumber;
+
+import lombok.Data;
 
 @Data
 public class UserAccountResponse {

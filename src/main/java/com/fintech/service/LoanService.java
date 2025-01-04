@@ -6,6 +6,7 @@ import com.fintech.dto.request.LoanRequest;
 import com.fintech.exception.BadRequestException;
 import com.fintech.model.Loan;
 import com.fintech.model.UsersAccount;
+import com.fintech.model.enums.AppStatus;
 import com.fintech.model.enums.LoanStatus;
 import com.fintech.repository.LoanRepository;
 import com.fintech.repository.UserAccountRepository;
@@ -37,6 +38,9 @@ public class LoanService {
         BigDecimal totalAmount = loanRequest.getLoanAmount().add(loanRequest.getLoanAmount()
                 .multiply(interestRate).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP));
         UsersAccount usersAccount = usersAccountOptional.get();
+        if (usersAccount.getAccountStatus() == AppStatus.INACTIVE) {
+            throw new BadRequestException("User account is inactive. Loan application cannot proceed.");
+        }
         boolean isUserVerified = usersAccount.isVerified();
         if (!isUserVerified) {
             throw new BadRequestException("User is not verified. Loan application cannot proceed.");

@@ -68,7 +68,7 @@ public class AdminService {
         return jwtAuthenticationResponse;
     }
 
-    public ResponseEntity<ResponseDto<String>> verifyUserAccount(Long userId, Long adminId) {
+    public ResponseEntity<ResponseDto<String>> verifyUserAccount(Long userId, Long adminId) { //before verifying the account we will need to validate the bvn (using rest template or feign client when connected to third party
         Optional<UsersAccount> usersAccountOptional = userAccountRepository.findById(userId);
         Optional<Admin> adminOptional = adminRepository.findById(adminId);
         if (usersAccountOptional.isEmpty()) {

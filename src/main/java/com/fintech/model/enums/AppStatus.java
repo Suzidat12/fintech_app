@@ -7,6 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AppStatus {
     COMPLETED("COMPLETED"),
+    INACTIVE("INACTIVE"),
+
     PENDING("PENDING");
 
     private final String registrationStatus;
